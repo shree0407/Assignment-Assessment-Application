@@ -1,0 +1,39 @@
+server:
+  port: 8080
+
+aws:
+  accessKey:
+  secretKey:
+  region:
+
+
+cors:
+  allowed-origins: "*"
+  allowed-methods: "*"
+
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/assignmentapp
+    username: shreeya
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  servlet:
+    multipart:
+      max-file-size: 6GB
+      max-request-size: 6GB
+
+
+
+application:
+  bucket:
+    name: assignmentappstorage
+
+
+
