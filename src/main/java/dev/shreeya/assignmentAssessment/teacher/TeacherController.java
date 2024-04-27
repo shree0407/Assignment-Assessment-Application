@@ -1,5 +1,6 @@
 package dev.shreeya.assignmentAssessment.teacher;
 
+import dev.shreeya.assignmentAssessment.exception.DuplicateResourceException;
 import dev.shreeya.assignmentAssessment.exception.UnauthorizedAccessException;
 import dev.shreeya.assignmentAssessment.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,12 +27,12 @@ public class TeacherController {
             ResponseEntity<byte[]> response = teacherService.uploadFiles(files);
             HttpHeaders headers = response.getHeaders();
             return new ResponseEntity<>(response.getBody(), headers, HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while uploading files");
+
+        } catch (DuplicateResourceException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
+
 
     @DeleteMapping("/delete/{fileName}")
     public ResponseEntity<String> deleteFile(@PathVariable String fileName) {
@@ -40,6 +41,8 @@ public class TeacherController {
 
                 message = "File deleted successfully";
                 status = HttpStatus.OK;
+
+
 
 
 

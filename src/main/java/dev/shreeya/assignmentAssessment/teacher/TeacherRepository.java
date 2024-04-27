@@ -3,6 +3,7 @@ package dev.shreeya.assignmentAssessment.teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -18,4 +19,6 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
     Optional<Teacher> findByTeacherEmail(String teacherEmail);
 
     void deleteTeacherByTeacherId(Long teacherId);
+
+    List<Teacher> findAllByTeacherBranch(String teacherBranch);
 }

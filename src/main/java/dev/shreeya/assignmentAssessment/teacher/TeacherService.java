@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import dev.shreeya.assignmentAssessment.assignment.Assignments;
 import dev.shreeya.assignmentAssessment.assignment.AssignmentsRepository;
+import dev.shreeya.assignmentAssessment.exception.DuplicateResourceException;
 import dev.shreeya.assignmentAssessment.exception.UnauthorizedAccessException;
 import dev.shreeya.assignmentAssessment.exception.UserNotFoundException;
 import org.slf4j.Logger;
@@ -46,12 +47,15 @@ public class TeacherService {
 
 
     public ResponseEntity<byte[]> uploadFiles(List<MultipartFile> files) {
-
         UUID uuid = UUID.randomUUID();
 
         for (MultipartFile file : files) {
-            File fileObj = convertMultiPartFileToFile(file);
             String originalFileName = file.getOriginalFilename();
+           if(assignmentsRepository.existsByFileName(originalFileName)) {
+               throw new DuplicateResourceException("File with name " + originalFileName + " already exists");
+           }
+
+            File fileObj = convertMultiPartFileToFile(file);
             String renameFile = uuid + "_" + originalFileName;
 
             Assignments assignment = new Assignments();
@@ -60,8 +64,8 @@ public class TeacherService {
             assignmentsRepository.save(assignment);
 
             s3Client.putObject(new PutObjectRequest(bucketName, renameFile, fileObj));
-
         }
+
         QRCodeGenerator qrCodeGenerator = new QRCodeGenerator();
         byte[] qrBytes = qrCodeGenerator.generateQRCodeWithUUID(uuid, 300, 300);
 
@@ -71,6 +75,7 @@ public class TeacherService {
 
         return new ResponseEntity<>(qrBytes, headers, HttpStatus.OK);
     }
+
 
     private File convertMultiPartFileToFile(MultipartFile file) {
         File convertedFile = new File(file.getOriginalFilename());
@@ -87,7 +92,10 @@ public class TeacherService {
         assignmentsRepository.deleteAssignmentsByFileName(fileName);
         return fileName + " removed ...";
 
+
     }
+
+
 
 
 

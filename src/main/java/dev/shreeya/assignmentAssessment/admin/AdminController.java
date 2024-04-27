@@ -11,6 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 @RestController
 @RequestMapping("api/v1/main")
 @CrossOrigin("*")
@@ -22,6 +26,12 @@ public class AdminController {
     }
 
 
+
+    @GetMapping("/teachers")
+    public List<Map<String, String>> getAllTeachersByBranch(
+            @RequestParam("branch") String teacherBranch) {
+        return adminService.getAllTeachersByBranch( teacherBranch);
+    }
 
 
     @PostMapping("teacher/registerTeacher")
@@ -46,6 +56,18 @@ public class AdminController {
     }
 
 
+
+    @GetMapping("/students")
+    public List<Map<String, Object>> getAllStudentsByBranch(
+            @RequestParam(name = "PRN", required = false) Long PRN,
+            @RequestParam(name = "name", required = false) String studentName,
+            @RequestParam("branch") String studentBranch) {
+        return adminService.getAllStudents(
+                Optional.ofNullable(PRN),
+                Optional.ofNullable(studentName),
+                studentBranch
+        );
+    }
 
     @PostMapping("student/registerStudent")
     public ResponseEntity<String> registerStudent(@RequestBody StudentRegistrationRequest studentRegistrationRequest) {

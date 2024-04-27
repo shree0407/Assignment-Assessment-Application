@@ -12,7 +12,7 @@ import dev.shreeya.assignmentAssessment.teacher.TeacherUpdateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.*;
 
 @Service("AdminService")
 public class AdminService {
@@ -35,6 +35,20 @@ public class AdminService {
                 new ResourceNotFoundException("Teacher with id [%s] not found".formatted(id)));
 
     }
+
+    public List<Map<String, String>> getAllTeachersByBranch( String teacherBranch) {
+        List<Teacher> teachers = teacherRepository.findAllByTeacherBranch( teacherBranch);
+        List<Map<String, String>> teacherDetails = new ArrayList<>();
+
+        for (Teacher teacher : teachers) {
+            Map<String, String> teacherInfo = new HashMap<>();
+            teacherInfo.put("name", teacher.getTeacherName());
+            teacherDetails.add(teacherInfo);
+        }
+
+        return teacherDetails;
+    }
+
 
 
     public void addTeacher(TeacherRegistrationRequest teacherRegistrationRequest) {
@@ -107,6 +121,31 @@ public class AdminService {
     public Student getStudent(Long PRN) {
         return studentRepository.findById(PRN).orElseThrow(() ->
                 new ResourceNotFoundException("Student with PRN [%s] not found".formatted(PRN)));
+    }
+
+    public List<Map<String, Object>> getAllStudents(Optional<Long> PRN, Optional<String> studentName, String studentBranch) {
+        List<Student> students;
+
+        if (PRN.isPresent() && studentName.isPresent()) {
+            students = studentRepository.findAllByStudentBranchAndStudentPRNAndStudentName(studentBranch, PRN.get(), studentName.get());
+        } else if (PRN.isPresent()) {
+            students = studentRepository.findAllByStudentBranchAndStudentPRN(studentBranch, PRN.get());
+        } else if (studentName.isPresent()) {
+            students = studentRepository.findAllByStudentBranchAndStudentName(studentBranch, studentName.get());
+        } else {
+            students = studentRepository.findAllByStudentBranch(studentBranch);
+        }
+
+        List<Map<String, Object>> studentDetails = new ArrayList<>();
+
+        for (Student student : students) {
+            Map<String, Object> studentInfo = new HashMap<>();
+            studentInfo.put("name", student.getStudentName());
+            studentInfo.put("PRN", student.getStudentPRN());
+            studentDetails.add(studentInfo);
+        }
+
+        return studentDetails;
     }
 
     public void addStudent(StudentRegistrationRequest studentRegistrationRequest) {

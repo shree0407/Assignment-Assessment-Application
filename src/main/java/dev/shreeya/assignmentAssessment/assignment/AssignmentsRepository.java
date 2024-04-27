@@ -14,4 +14,6 @@ public interface AssignmentsRepository extends JpaRepository<Assignments, UUID> 
     Assignments findByUuidAndFileName(UUID uuid, String fileName);
 
     Assignments deleteAssignmentsByFileName(String fileName);
+
+    boolean existsByFileName(String fileName);
 }
