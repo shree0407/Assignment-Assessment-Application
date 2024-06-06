@@ -14,7 +14,7 @@ This application provides distinct functionalities for three types of users: Adm
 
 
 - # Prerequisites
-Java 11 or higher  
+Java 17 or higher  
 Maven  
 AWS Account with S3 bucket access  
 Git  
